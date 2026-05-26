@@ -39,7 +39,7 @@ In the consuming app's `composer.json`:
 ```json
 {
     "repositories": [
-        { "type": "path", "url": "../packages/signaladoc/event-bus" }
+        { "type": "path", "url": "../packages/event-bus" }
     ],
     "require": {
         "signaladoc/event-bus": "*"
