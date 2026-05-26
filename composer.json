@@ -1,0 +1,43 @@
+{
+    "name": "signaladoc/event-bus",
+    "description": "Transactional outbox producer + Redis Streams consumer for Signaladoc microservices. Implements ARCHITECTURE.md §13.",
+    "type": "library",
+    "license": "proprietary",
+    "keywords": ["laravel", "redis-streams", "outbox", "event-driven", "microservices"],
+    "require": {
+        "php": "^8.2",
+        "illuminate/console": "^11.0|^12.0|^13.0",
+        "illuminate/container": "^11.0|^12.0|^13.0",
+        "illuminate/contracts": "^11.0|^12.0|^13.0",
+        "illuminate/database": "^11.0|^12.0|^13.0",
+        "illuminate/http": "^11.0|^12.0|^13.0",
+        "illuminate/redis": "^11.0|^12.0|^13.0",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "nesbot/carbon": "^2.0|^3.0",
+        "psr/log": "^1.0|^2.0|^3.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
+        "phpunit/phpunit": "^10.0|^11.0|^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Signaladoc\\EventBus\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Signaladoc\\EventBus\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
