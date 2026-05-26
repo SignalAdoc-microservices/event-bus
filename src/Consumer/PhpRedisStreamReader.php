@@ -5,14 +5,19 @@ namespace Signaladoc\EventBus\Consumer;
 use Illuminate\Redis\RedisManager;
 use RuntimeException;
 use Signaladoc\EventBus\Consumer\Contracts\StreamReader;
+use Signaladoc\EventBus\Support\RawRedis;
 use Throwable;
 
 /**
- * Concrete StreamReader using Laravel's Redis manager (phpredis under the hood).
+ * Concrete StreamReader using Laravel's Redis manager (phpredis or Predis).
  *
- * Every Redis call uses ->command(...) with the raw protocol arguments so we don't
- * depend on phpredis-vs-predis high-level signatures (they differ across
- * client versions, especially for XCLAIM and XPENDING IDLE).
+ * Every Redis call uses {@see RawRedis} to dispatch via the underlying
+ * client's raw RESP entrypoint (`rawCommand` on phpredis, `executeRaw` on
+ * Predis). This avoids Laravel's `Connection::command()` wrapper, which
+ * would route to typed phpredis methods whose fixed signatures don't
+ * match RESP-style positional args — particularly for XCLAIM / XPENDING
+ * IDLE / XREADGROUP / XADD where the typed signatures differ between
+ * phpredis versions.
  *
  * Designed to be quiet on benign edge cases:
  *  - ensureGroup() swallows "BUSYGROUP" (group exists) — that's the happy path.
@@ -29,7 +34,7 @@ final class PhpRedisStreamReader implements StreamReader
     {
         try {
             // MKSTREAM = create the stream itself if absent (we may boot before producer's first XADD).
-            $this->conn()->command('XGROUP', ['CREATE', $stream, $group, $startId, 'MKSTREAM']);
+            RawRedis::send($this->conn(), 'XGROUP', ['CREATE', $stream, $group, $startId, 'MKSTREAM']);
         } catch (Throwable $e) {
             // BUSYGROUP is normal on every subsequent boot — only re-throw real errors.
             if (! str_contains($e->getMessage(), 'BUSYGROUP')) {
@@ -53,7 +58,7 @@ final class PhpRedisStreamReader implements StreamReader
         }
 
         try {
-            $raw = $this->conn()->command('XREADGROUP', $args);
+            $raw = RawRedis::send($this->conn(), 'XREADGROUP', $args);
         } catch (Throwable $e) {
             throw new RuntimeException("XREADGROUP failed: {$e->getMessage()}", previous: $e);
         }
@@ -69,7 +74,7 @@ final class PhpRedisStreamReader implements StreamReader
     public function ack(string $stream, string $group, string $messageId): void
     {
         try {
-            $this->conn()->command('XACK', [$stream, $group, $messageId]);
+            RawRedis::send($this->conn(), 'XACK', [$stream, $group, $messageId]);
         } catch (Throwable $e) {
             // XACK failing is bad (message will redeliver) but not fatal here —
             // the worker logs and continues; idempotency at handler level protects us.
@@ -81,7 +86,7 @@ final class PhpRedisStreamReader implements StreamReader
     {
         // XPENDING <stream> <group> IDLE <min-idle> - + <count>
         try {
-            $raw = $this->conn()->command('XPENDING', [
+            $raw = RawRedis::send($this->conn(), 'XPENDING', [
                 $stream,
                 $group,
                 'IDLE', (string) $minIdleMs,
@@ -122,7 +127,7 @@ final class PhpRedisStreamReader implements StreamReader
         $args = [$stream, $group, $consumer, (string) $minIdleMs, ...$messageIds];
 
         try {
-            $raw = $this->conn()->command('XCLAIM', $args);
+            $raw = RawRedis::send($this->conn(), 'XCLAIM', $args);
         } catch (Throwable $e) {
             throw new RuntimeException("XCLAIM failed on {$stream}: {$e->getMessage()}", previous: $e);
         }
@@ -152,7 +157,7 @@ final class PhpRedisStreamReader implements StreamReader
     public function publishDlq(string $dlqStream, string $envelope, int $maxLen): string
     {
         try {
-            $id = $this->conn()->command('XADD', [
+            $id = RawRedis::send($this->conn(), 'XADD', [
                 $dlqStream,
                 'MAXLEN', '~', (string) $maxLen,
                 '*',
