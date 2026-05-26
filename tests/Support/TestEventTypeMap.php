@@ -8,7 +8,7 @@ use Signaladoc\EventBus\Producer\Contracts\EventTypeMap;
 /**
  * Minimal in-test EventTypeMap implementation.
  *
- * Concrete services ship their own (e.g. billing-service's EventTypeRegistry).
+ * Concrete services ship their own (e.g. billing-service's EventBusCatalog).
  * This one carries just the events the package's own tests need.
  */
 final class TestEventTypeMap implements EventTypeMap

@@ -90,8 +90,8 @@ types your service emits) and bind it in your own service provider:
 
 ```php
 $this->app->singleton(
-    Signaladoc\EventBus\Contracts\EventTypeMap::class,
-    App\Outbox\BillingEventTypeRegistry::class,
+    Signaladoc\EventBus\Producer\Contracts\EventTypeMap::class,
+    App\Catalogs\EventBusCatalog::class,
 );
 ```
 

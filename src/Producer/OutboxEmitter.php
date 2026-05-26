@@ -20,7 +20,7 @@ use Signaladoc\EventBus\Producer\Exceptions\OutboxEmissionOutsideTransactionExce
  *         $cycle->update(['status' => 'completed', ...]);
  *
  *         OutboxEmitter::record(
- *             eventType:    BillingEventTypeRegistry::CYCLE_COMPLETED,
+ *             eventType:    BillingEventBusCatalog::CYCLE_COMPLETED,
  *             aggregateId:  $cycle->ref,  // store the full cross-service ref
  *             payload:      [...],
  *             partitionKey: $cycle->ref,
