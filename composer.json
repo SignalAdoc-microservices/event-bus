@@ -2,7 +2,7 @@
     "name": "signaladoc/event-bus",
     "description": "Transactional outbox producer + Redis Streams consumer for Signaladoc microservices. Implements ARCHITECTURE.md §13.",
     "type": "library",
-    "license": "proprietary",
+    "license": "MIT",
     "keywords": ["laravel", "redis-streams", "outbox", "event-driven", "microservices"],
     "require": {
         "php": "^8.2",
