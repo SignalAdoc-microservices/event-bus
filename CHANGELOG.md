@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `Signaladoc\EventBus\Support\CustomerRefAliases` — candidate spellings for
+  telemedicine customer refs (`telemedicine-backend.users:{id}` ↔
+  `telemedicine.users:{id}`) used by B2C `/me` scoping. Shared so services
+  do not re-copy the helper.
 - Initial extraction from the in-monorepo `billing-service` (producer) and
   `insurance-service` (consumer) implementations.
 - `Signaladoc\EventBus\Producer\ProducerServiceProvider` — transactional outbox

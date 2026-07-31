@@ -20,7 +20,7 @@ architecture-change PR**.
 |---|---|---|
 | Producer (anyone who emits events) | `OutboxEmitter`, `OutboxEvent` Eloquent model, `Forwarder` (drainer) loop, `PhpRedisStreamPublisher`, `EnvelopeBuilder`, `outbox:forward` artisan command, `outbox_events` migration | `Signaladoc\EventBus\Producer\ProducerServiceProvider` |
 | Consumer (anyone who reads events) | `StreamWorker`, `Dispatcher`, `EnvelopeParser`, `HandlerRegistry`, `EventSourceRegistry`, `PhpRedisStreamReader`, `EloquentEventReceiptStore`, `events:consume` artisan command | `Signaladoc\EventBus\Consumer\ConsumerServiceProvider` |
-| Shared | `Envelope` value object, `EventTypeMap` contract, `MalformedEnvelopeException` | n/a (loaded by both) |
+| Shared | `Envelope` value object, `EventTypeMap` contract, `MalformedEnvelopeException`, `CrossServiceRef`, `TracksAsRef`, `CustomerRefAliases` | n/a (loaded by both) |
 
 Service providers are **NOT** auto-discovered. Add the ones you need to your
 app's `bootstrap/providers.php` (Laravel 11+) or `config/app.php`.
