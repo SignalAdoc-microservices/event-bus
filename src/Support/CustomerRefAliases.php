@@ -9,7 +9,7 @@ namespace Signaladoc\EventBus\Support;
  *
  * Identity / B2C gateway emit `telemedicine-backend.users:{id}` (canonical
  * per billing SCHEMA invariant #22). Some writers (notably insurance enroll
- * today) still persist `telemedicine.users:{id}`. When scoping B2C `/me`
+ * today) still persist `telemedicine.users:{id}`. When scoping B2C `/user`
  * reads from gateway `X-Identity-Source-Ref`, try both forms so either
  * spelling matches.
  *
